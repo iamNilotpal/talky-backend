@@ -13,6 +13,8 @@ app.get('/', (req, res) =>
     .json({ status: 'ok', statusCode: 200, message: 'Hello from Talky.' })
 );
 
+app.use('/api', require('./routes'));
+
 // --------------- 404 Error Handler --------------- //
 app.use((req, res, next) => next(httpErrors.NotFound()));
 
@@ -21,7 +23,7 @@ app.use((error, req, res, next) => {
   if (error.status === 404)
     return res.status(404).json({
       status: 'error',
-      error: error.message || 'Not Found.',
+      message: error.message || 'Not Found.',
       statusCode: 404,
     });
   else {
@@ -30,7 +32,7 @@ app.use((error, req, res, next) => {
     return res.status(error.status || 500).json({
       status: 'error',
       statusCode: error.status || 500,
-      error: error.message || 'Internal Server Error.',
+      message: error.message || 'Internal Server Error.',
     });
   }
 });
