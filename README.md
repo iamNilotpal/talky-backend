@@ -1,6 +1,4 @@
-## Talky
-
-A nice project with a nice description
+# Talky
 
 ---
 
@@ -39,13 +37,6 @@ command.
     $ npm --version
     6.x
 
-If you need to update `npm`, you can make it using `npm`! Cool right? After
-running the following command, just open again the command line and be happy.
-
-    $ npm install npm -g
-
-###
-
 ### Yarn installation
 
 After installing node, this project will need yarn too, so just run the
@@ -55,14 +46,8 @@ following command.
 
 ---
 
-## Install
-
-    $ git clone https://github.com/YOUR_USERNAME/PROJECT_TITLE
-    $ cd PROJECT_TITLE
-    $ yarn install
-
 ## Running the project
 
-    $ yarn start
-    $ yarn run dev (for development)
+    $ yarn start or npm start (for production)
+    $ yarn dev or npm run dev(for development)
 
