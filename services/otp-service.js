@@ -22,7 +22,7 @@ class OtpService {
     });
   }
 
-  async verifyOtp(hashedOtp, data) {
+  verifyOtp(hashedOtp, data) {
     const computedHash = hashService.hashOtp(data);
     return hashedOtp === computedHash;
   }

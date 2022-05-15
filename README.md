@@ -4,8 +4,8 @@
 
 ## Requirements
 
-For development, you will only need Node.js and a node global package, Yarn or NPM,
-installed in your environement.
+For development, you will only need Node.js and a node global package, Yarn or
+NPM, installed in your environement.
 
 ### Node
 
@@ -48,6 +48,5 @@ following command.
 
 ## Running the project
 
-    $ yarn start or npm start (for production)
     $ yarn dev or npm run dev(for development)
-
+    $ yarn start or npm start (for production)
