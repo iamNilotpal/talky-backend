@@ -2,11 +2,11 @@ const crypto = require('crypto');
 
 class HashService {
   hashOtp(data) {
-    const hashed = crypto
+    return crypto
       .createHmac('sha256', process.env.SECRET_HASH_OTP)
-      .digest(data)
+      .update(data)
+      .digest()
       .toString('hex');
-    return hashed;
   }
 }
 

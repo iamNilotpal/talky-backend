@@ -16,11 +16,12 @@ class AuthController {
       const data = `${phone}.${otp}.${expires}`;
       const hashedOtp = hashService.hashOtp(data);
 
-      await otpService.sendBySMS(phone, otp);
+      // await otpService.sendBySMS(phone, otp);
       return res.status(200).json({
         status: 'success',
         hash: `${hashedOtp}.${expires}`,
         phone,
+        otp,
       });
     } catch (error) {
       console.log(error.message);
@@ -52,9 +53,9 @@ class AuthController {
         id: user._id,
         activated: user.activated,
       });
+
       const refreshToken = await tokenService.generateRefreshToken({
         id: user._id,
-        activated: user.activated,
       });
 
       res.cookie('refreshToken', refreshToken, {
