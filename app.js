@@ -1,9 +1,13 @@
 const express = require('express');
 const httpErrors = require('http-errors');
+const cors = require('cors');
 
 const app = express();
 app.disable('x-powered-by');
 
+app.use(
+  cors({ origin: ['http://localhost:3000', 'https://talky-talk.vercel.app'] })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
