@@ -3,6 +3,7 @@ const hashService = require('../services/hash-service');
 const otpService = require('../services/otp-service');
 const tokenService = require('../services/token-service');
 const userService = require('../services/user-service');
+const UserDto = require('../dtos/user-dto');
 
 class AuthController {
   async sendOTP(req, res, next) {
@@ -61,12 +62,14 @@ class AuthController {
       res.cookie('refreshToken', refreshToken, {
         maxAge: 1000 * 60 * 60 * 24 * 365,
         httpOnly: true,
+        secure: true,
       });
 
       return res.status(200).json({
         status: 'success',
         message: 'OTP verified successfully.',
         accessToken,
+        user: new UserDto(user),
       });
     } catch (error) {
       return next(httpErrors.InternalServerError('Falied to validate.'));
