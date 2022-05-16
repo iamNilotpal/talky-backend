@@ -8,7 +8,7 @@ async function authMiddleware(req, res, next) {
     if (!accessToken) return next(httpErrors.Unauthorized('Session expired.'));
 
     const userData = await tokenService.verifyAccessToken(accessToken);
-    if (!userData) return next(httpErrors.Unauthorized('Invalid token.'));
+    if (!userData) return next(httpErrors.Unauthorized('Token expired.'));
 
     const user = await userService.findUser({ _id: userData.id });
     if (!user) return next(httpErrors.NotFound('User not found.'));
@@ -16,7 +16,7 @@ async function authMiddleware(req, res, next) {
     req.user = user;
     next();
   } catch (error) {
-    return next(httpErrors.Unauthorized('Invalid token.'));
+    return next(httpErrors.Unauthorized('Session expired. Login again.'));
   }
 }
 

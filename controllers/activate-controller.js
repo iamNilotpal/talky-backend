@@ -1,4 +1,4 @@
-const httpError = require('http-errors');
+const httpErrors = require('http-errors');
 const Jimp = require('jimp');
 const path = require('path');
 const { nanoid } = require('nanoid');
@@ -16,13 +16,20 @@ class ActivateController {
 
       const { name, avatar } = req.body;
       if (!name || !avatar)
-        return next(httpError.BadRequest('All fields are required'));
+        return next(httpErrors.BadRequest('All fields are required'));
 
       const buffer = Buffer.from(
         avatar.replace(/^data:image\/(png|jpg|jpeg);base64,/, ''),
         'base64'
       );
-      const image = await Jimp.read(buffer);
+      let image;
+      try {
+        image = await Jimp.read(buffer);
+      } catch (error) {
+        return next(
+          httpErrors.BadRequest('Only PNG and JPEG files are allowed.')
+        );
+      }
       const imageName = `Avatar-${nanoid()}.${image.getExtension()}`;
       await image
         .resize(150, Jimp.AUTO)
@@ -39,8 +46,7 @@ class ActivateController {
         user: new UserDto(req.user),
       });
     } catch (error) {
-      console.log(error);
-      return next(httpError.InternalServerError());
+      return next(httpErrors.InternalServerError());
     }
   }
 }

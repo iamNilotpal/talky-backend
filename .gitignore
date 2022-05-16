@@ -42,6 +42,7 @@ build/Release
 node_modules/
 jspm_packages/
 !storage/.gitkeep
+storage/
 
 
 # Snowpack dependency directory (https://snowpack.dev/)
