@@ -32,6 +32,7 @@ class TokenService {
     res.cookie(key, data.token, {
       maxAge: data.age,
       httpOnly: true,
+      sameSite: 'none',
       secure: true,
     });
   }
