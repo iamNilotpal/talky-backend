@@ -4,13 +4,16 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
 const app = express();
-app.disable('x-powered-by');
 
 app.set('trust proxy', 1);
+app.disable('x-powered-by');
 app.use(
   cors({
     origin: ['http://localhost:3000', 'https://talky-talk.vercel.app'],
     credentials: true,
+    allowedHeaders: {
+      'Access-Control-Allow-Credentials': true,
+    },
   })
 );
 app.use(express.json({ limit: '10mb' }));

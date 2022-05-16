@@ -33,6 +33,7 @@ class TokenService {
       maxAge: data.age,
       httpOnly: true,
       sameSite: 'none',
+      path: '/',
       secure: true,
     });
   }
