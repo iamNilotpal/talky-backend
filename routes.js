@@ -9,5 +9,6 @@ router.post(
   require('./middlewares/auth-middleware'),
   activateController.activateUser
 );
+router.post('/refresh-token', authController.refreshToken);
 
 module.exports = router;

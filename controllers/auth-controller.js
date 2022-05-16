@@ -12,20 +12,20 @@ class AuthController {
       if (!phone) return next(httpErrors.BadRequest('Provide a phone number.'));
 
       const otp = otpService.generateOtp();
-      const ttl = 1000 * 60 * 3;
+      const ttl = 1000 * 60 * 3; /* 3 Minutes */
       const expires = Date.now() + ttl;
-      const data = `${phone}.${otp}.${expires}`;
+      const data = `${phone}.${otp}.${expires}`; /* Will match with the hash provided by the user */
       const hashedOtp = hashService.hashOtp(data);
 
       // await otpService.sendBySMS(phone, otp);
       return res.status(200).json({
-        status: 'success',
+        ok: true,
         hash: `${hashedOtp}.${expires}`,
         phone,
         otp,
       });
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
       return next(httpErrors.InternalServerError('Falied to send OTP.'));
     }
   }
@@ -42,12 +42,16 @@ class AuthController {
           httpErrors.BadRequest('OTP has expired. Request for new one.')
         );
 
+      /* If otp hasn't expired compute hash with the phone, 
+      expires and otp and match against the hash comping from client */
       const data = `${phone}.${otp}.${expires}`;
       const isValid = otpService.verifyOtp(hashedOtp, data);
-
       if (!isValid) return next(httpErrors.BadRequest("OTP doesn't match."));
 
-      let user = await userService.findUser(phone);
+      /* Find user the phone number if exist generate tokens, store the 
+        refresh token in database  and send the required data,
+       if not create one and do the same */
+      let user = await userService.findUser({ phone });
       if (!user) user = await userService.createUser({ phone });
 
       const accessToken = await tokenService.generateAccessToken({
@@ -59,20 +63,74 @@ class AuthController {
         id: user._id,
       });
 
-      res.cookie('refreshToken', refreshToken, {
-        maxAge: 1000 * 60 * 60 * 24 * 365,
-        httpOnly: true,
-        secure: true,
+      await tokenService.storeRefreshToken(refreshToken, user._id);
+      tokenService.setTokenToCookie(res, 'accessToken', {
+        token: accessToken,
+        age: 1000 * 60 * 60 * 24,
+      });
+      tokenService.setTokenToCookie(res, 'refreshToken', {
+        token: refreshToken,
+        age: 1000 * 60 * 60 * 24 * 365,
       });
 
       return res.status(200).json({
-        status: 'success',
-        message: 'OTP verified successfully.',
-        accessToken,
+        ok: true,
+        authed: true,
         user: new UserDto(user),
       });
     } catch (error) {
       return next(httpErrors.InternalServerError('Falied to validate.'));
+    }
+  }
+
+  async refreshToken(req, res, next) {
+    try {
+      const { refreshToken: refreshTokenFromCookie } = req.cookies;
+      if (!refreshTokenFromCookie)
+        return next(httpErrors.BadRequest('Token is required.'));
+
+      const userData = tokenService
+        .verifyRefreshToken(refreshTokenFromCookie)
+        .then((data) => data)
+        .catch(() => next(httpErrors.Unauthorized('Token expired.')));
+      if (!userData) return next(httpErrors.Unauthorized('Token expired.'));
+
+      const validToken = await tokenService.findRefreshToken(
+        refreshTokenFromCookie,
+        userData.id
+      );
+      if (!validToken) return next(httpErrors.Unauthorized('Token expired.'));
+
+      const user = await userService.findUser({ _id: userData.id });
+      if (!user) return next(httpErrors.NotFound('User not found.'));
+
+      const accessToken = await tokenService.generateAccessToken({
+        id: user._id,
+        activated: user.activated,
+      });
+
+      const refreshToken = await tokenService.generateRefreshToken({
+        id: user._id,
+      });
+
+      await validToken.remove();
+      await tokenService.storeRefreshToken(refreshToken, user._id);
+      tokenService.setTokenToCookie(res, 'accessToken', {
+        token: accessToken,
+        age: 1000 * 60 * 60 * 24,
+      });
+      tokenService.setTokenToCookie(res, 'refreshToken', {
+        token: refreshToken,
+        age: 1000 * 60 * 60 * 24 * 365,
+      });
+
+      return res.status(200).json({
+        ok: true,
+        authed: true,
+        user: new UserDto(user),
+      });
+    } catch (error) {
+      return next(httpErrors.InternalServerError());
     }
   }
 }
