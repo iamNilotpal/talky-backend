@@ -11,9 +11,6 @@ app.use(
   cors({
     origin: ['http://localhost:3000', 'https://talky-talk.vercel.app'],
     credentials: true,
-    allowedHeaders: {
-      'Access-Control-Allow-Credentials': true,
-    },
   })
 );
 app.use(express.json({ limit: '10mb' }));
