@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 async function startMongoDB(server) {
   try {
     mongoose
-      .connect(process.env.MONGO_URL, {
+      .connect(process.env.DB_URL, {
         dbName: process.env.DB_NAME,
         useNewUrlParser: true,
       })

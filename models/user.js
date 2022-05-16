@@ -3,8 +3,19 @@ const mongoose = require('mongoose');
 const UserSchema = new mongoose.Schema(
   {
     phone: { type: String, unique: true, required: true },
-    email: { type: String, unique: true, required: false },
     activated: { type: Boolean, required: true, default: false },
+    name: {
+      type: String,
+      required: function () {
+        return this.activated === true;
+      },
+    },
+    avatar: {
+      type: String,
+      required: function () {
+        return this.activated === true;
+      },
+    },
   },
   { timestamps: true }
 );
