@@ -10,7 +10,7 @@ const JWT_REFRESH_TOKEN_SECRET = process.env.JWT_REFRESH_TOKEN_SECRET;
 class TokenService {
   generateAccessToken(payload) {
     return signToken(payload, JWT_ACCESS_TOKEN_SECRET, {
-      expiresIn: '1m',
+      expiresIn: '1h',
       issuer: process.env.BASE_URL,
       audience: String(payload.id),
     });
@@ -18,7 +18,7 @@ class TokenService {
 
   generateRefreshToken(payload) {
     return signToken(payload, JWT_REFRESH_TOKEN_SECRET, {
-      expiresIn: '1h',
+      expiresIn: '1y',
       issuer: process.env.BASE_URL,
       audience: String(payload.id),
     });
@@ -36,16 +36,24 @@ class TokenService {
     });
   }
 
+  clearCookie(res, key) {
+    res.clearCookie(key);
+  }
+
   verifyAccessToken(token) {
     return verifyToken(token, JWT_ACCESS_TOKEN_SECRET);
   }
 
   verifyRefreshToken(token) {
-    return verifyToken(token.JWT_REFRESH_TOKEN_SECRET);
+    return verifyToken(token, JWT_REFRESH_TOKEN_SECRET);
   }
 
   async findRefreshToken(token, userId) {
     return RefreshToken.findOne({ token, userId });
+  }
+
+  async removeToken(token) {
+    return await RefreshToken.deleteOne({ token });
   }
 }
 

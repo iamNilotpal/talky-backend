@@ -89,10 +89,9 @@ class AuthController {
       if (!refreshTokenFromCookie)
         return next(httpErrors.BadRequest('Token is required.'));
 
-      const userData = tokenService
-        .verifyRefreshToken(refreshTokenFromCookie)
-        .then((data) => data)
-        .catch(() => next(httpErrors.Unauthorized('Token expired.')));
+      const userData = await tokenService.verifyRefreshToken(
+        refreshTokenFromCookie
+      );
       if (!userData) return next(httpErrors.Unauthorized('Token expired.'));
 
       const validToken = await tokenService.findRefreshToken(
@@ -130,7 +129,29 @@ class AuthController {
         user: new UserDto(user),
       });
     } catch (error) {
+      if (error.name) return next(httpErrors.Unauthorized('Session expired.'));
       return next(httpErrors.InternalServerError());
+    }
+  }
+
+  async logout(req, res, next) {
+    try {
+      const { refreshToken } = req.cookies;
+      if (!refreshToken)
+        return next(httpErrors.Unauthorized('IDK what error msg to send :)'));
+
+      tokenService.clearCookie(res, 'accessToken');
+      tokenService.clearCookie(res, 'refreshToken');
+      await tokenService.removeToken(refreshToken);
+      return res.status(200).json({ user: null });
+    } catch (error) {
+      tokenService.clearCookie(res, 'accessToken');
+      tokenService.clearCookie(res, 'refreshToken');
+      return res.status(200).json({
+        ok: false,
+        message: 'IDK something went wrong :)',
+        user: null,
+      });
     }
   }
 }
