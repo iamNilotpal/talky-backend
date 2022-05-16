@@ -6,13 +6,13 @@ const cookieParser = require('cookie-parser');
 const app = express();
 app.disable('x-powered-by');
 
+app.set('trust proxy', 1);
 app.use(
   cors({
     origin: ['http://localhost:3000', 'https://talky-talk.vercel.app'],
     credentials: true,
   })
 );
-app.set('trust proxy', 1);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false, limit: '10mb' }));
 app.use(cookieParser());
