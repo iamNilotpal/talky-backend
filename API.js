@@ -1,6 +1,6 @@
 const BASE_URL = process.env.BASE_URL + '/api';
 
-export const routes = {
+const routes = {
   routes: [
     { path: `${BASE_URL}/send-otp`, description: 'Send OTP.' },
     { path: `${BASE_URL}/verify-otp`, description: 'Verify OTP.' },
@@ -12,3 +12,5 @@ export const routes = {
     { path: `${BASE_URL}/logout`, description: 'Logs out user.' },
   ],
 };
+
+module.exports = routes;

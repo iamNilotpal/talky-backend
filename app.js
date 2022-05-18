@@ -22,8 +22,8 @@ app.use('/storage', express.static('storage/'));
 
 /* --------- API Routes ----------- */
 app.get('/', (req, res) => {
-  const { routes } = require('./API');
-  res.status(200).json({
+  const routes = require('./API');
+  return res.status(200).json({
     ok: true,
     statusCode: 200,
     statusText: 'Hello from Talky.',
