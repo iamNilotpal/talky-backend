@@ -17,13 +17,19 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false, limit: '10mb' }));
 app.use(cookieParser());
 
+/* -------- Serving Static Files ----------- */
 app.use('/storage', express.static('storage/'));
 
-app.get('/', (req, res) =>
-  res
-    .status(200)
-    .json({ ok: true, statusCode: 200, statusText: 'Hello from Talky.' })
-);
+/* --------- API Routes ----------- */
+app.get('/', (req, res) => {
+  const { routes } = require('./API');
+  res.status(200).json({
+    ok: true,
+    statusCode: 200,
+    statusText: 'Hello from Talky.',
+    routes,
+  });
+});
 
 app.use('/api', require('./routes'));
 
@@ -38,15 +44,12 @@ app.use((error, req, res, next) => {
       message: error.message || 'Not Found.',
       statusCode: 404,
     });
-  else {
-    if (error.isJoi) error.status = 422;
-
+  else
     return res.status(error.status || 500).json({
       ok: false,
       statusCode: error.status || 500,
       message: error.message || 'Internal Server Error.',
     });
-  }
 });
 
 module.exports = app;
