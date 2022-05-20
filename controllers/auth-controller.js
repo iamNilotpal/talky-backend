@@ -79,6 +79,7 @@ class AuthController {
         user: new UserDto(user),
       });
     } catch (error) {
+      console.log(error);
       return next(httpErrors.InternalServerError('Falied to validate.'));
     }
   }

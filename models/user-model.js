@@ -15,9 +15,10 @@ const UserSchema = new mongoose.Schema(
       required: function () {
         return this.activated === true;
       },
+      get: (avatar) => (avatar ? `${process.env.BASE_URL}${avatar}` : avatar),
     },
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { getters: true } }
 );
 
 const User = mongoose.model('User', UserSchema);
