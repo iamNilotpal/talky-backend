@@ -43,7 +43,7 @@ class AuthController {
         );
 
       /* If otp hasn't expired compute hash with the phone, 
-      expires and otp and match against the hash comping from client */
+      expires and otp and match against the hash coming from client */
       const data = `${phone}.${otp}.${expires}`;
       const isValid = otpService.verifyOtp(hashedOtp, data);
       if (!isValid) return next(httpErrors.BadRequest("OTP doesn't match."));
