@@ -10,6 +10,12 @@ const routes = {
     },
     { path: `${BASE_URL}/activate`, description: 'Activates user.' },
     { path: `${BASE_URL}/logout`, description: 'Logs out user.' },
+    {
+      path: `${BASE_URL}/rooms`,
+      description: 'Get all the rooms.',
+      type: 'GET',
+    },
+    { path: `${BASE_URL}/rooms`, description: 'Create Room.', type: 'POST' },
   ],
 };
 
