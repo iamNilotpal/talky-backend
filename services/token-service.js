@@ -1,4 +1,5 @@
 const util = require('util');
+
 const JWT = require('jsonwebtoken');
 const RefreshToken = require('../models/token-model');
 

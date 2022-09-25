@@ -1,6 +1,6 @@
 const httpErrors = require('http-errors');
-const roomService = require('../services/room-service');
 const RoomDto = require('../dtos/room-dto');
+const roomService = require('../services/room-service');
 
 class RoomController {
   async createRoom(req, res, next) {
@@ -18,7 +18,7 @@ class RoomController {
       return res.status(200).json({ ok: true, room: new RoomDto(room) });
     } catch (error) {
       return next(
-        httpErrors.InternalServerError('Error creating room. Try again.')
+        httpErrors.InternalServerError('Error creating room. Try again.'),
       );
     }
   }

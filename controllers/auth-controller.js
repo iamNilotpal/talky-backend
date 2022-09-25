@@ -1,9 +1,9 @@
 const httpErrors = require('http-errors');
+const UserDto = require('../dtos/user-dto');
 const hashService = require('../services/hash-service');
 const otpService = require('../services/otp-service');
 const tokenService = require('../services/token-service');
 const userService = require('../services/user-service');
-const UserDto = require('../dtos/user-dto');
 
 class AuthController {
   async sendOTP(req, res, next) {
@@ -26,7 +26,7 @@ class AuthController {
       });
     } catch (error) {
       console.log(error);
-      return next(httpErrors.InternalServerError('Falied to send OTP.'));
+      return next(httpErrors.InternalServerError('Failed to send OTP.'));
     }
   }
 
@@ -39,7 +39,7 @@ class AuthController {
       const [hashedOtp, expires] = hash.split('.');
       if (Date.now() > Number(expires))
         return next(
-          httpErrors.BadRequest('OTP has expired. Request for new one.')
+          httpErrors.BadRequest('OTP has expired. Request for new one.'),
         );
 
       /* If otp hasn't expired compute hash with the phone, 
@@ -80,7 +80,7 @@ class AuthController {
       });
     } catch (error) {
       console.log(error);
-      return next(httpErrors.InternalServerError('Falied to validate.'));
+      return next(httpErrors.InternalServerError('Failed to validate.'));
     }
   }
 
@@ -91,13 +91,13 @@ class AuthController {
         return next(httpErrors.BadRequest('Token is required.'));
 
       const userData = await tokenService.verifyRefreshToken(
-        refreshTokenFromCookie
+        refreshTokenFromCookie,
       );
       if (!userData) return next(httpErrors.Unauthorized('Token expired.'));
 
       const validToken = await tokenService.findRefreshToken(
         refreshTokenFromCookie,
-        userData.id
+        userData.id,
       );
       if (!validToken) return next(httpErrors.Unauthorized('Token expired.'));
 

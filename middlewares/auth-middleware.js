@@ -1,6 +1,6 @@
+const httpErrors = require('http-errors');
 const tokenService = require('../services/token-service');
 const userService = require('../services/user-service');
-const httpErrors = require('http-errors');
 
 async function authMiddleware(req, res, next) {
   try {

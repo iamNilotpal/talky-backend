@@ -1,7 +1,8 @@
-const httpErrors = require('http-errors');
-const Jimp = require('jimp');
 const path = require('path');
+const Jimp = require('jimp');
 const { nanoid } = require('nanoid');
+const httpErrors = require('http-errors');
+
 const UserDto = require('../dtos/user-dto');
 
 class ActivateController {
@@ -20,14 +21,14 @@ class ActivateController {
 
       const buffer = Buffer.from(
         avatar.replace(/^data:image\/(png|jpg|jpeg);base64,/, ''),
-        'base64'
+        'base64',
       );
       let image;
       try {
         image = await Jimp.read(buffer);
       } catch (error) {
         return next(
-          httpErrors.BadRequest('Only PNG and JPEG files are allowed.')
+          httpErrors.BadRequest('Only PNG and JPEG files are allowed.'),
         );
       }
       const imageName = `Avatar-${nanoid()}.${image.getExtension()}`;

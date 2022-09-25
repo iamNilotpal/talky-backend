@@ -1,9 +1,10 @@
 const crypto = require('crypto');
-const hashService = require('./hash-service');
 
 const SMS_SID = process.env.SMS_SID;
 const SMS_AUTH_TOKEN = process.env.SMS_AUTH_TOKEN;
 const SMS_PHONE_NUMBER = process.env.SMS_PHONE_NUMBER;
+
+const hashService = require('./hash-service');
 const twilio = require('twilio')(SMS_SID, SMS_AUTH_TOKEN, {
   lazyLoading: true,
 });
