@@ -32,6 +32,18 @@ class RoomController {
       return next(httpErrors.InternalServerError('Error fetching rooms.'));
     }
   }
+
+  async getRoom(req, res, next) {
+    try {
+      const { id } = req.params;
+      const room = await roomService.getRoom(id);
+
+      if (!room) return next(httpErrors.NotFound("Room doesn't exist."));
+      return res.status(200).json({ ok: true, room: new RoomDto(room) });
+    } catch (error) {
+      return next(httpErrors.InternalServerError('Error fetching rooms.'));
+    }
+  }
 }
 
 module.exports = new RoomController();

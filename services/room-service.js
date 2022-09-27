@@ -20,6 +20,15 @@ class RoomService {
       .exec();
     return rooms;
   }
+
+  async getRoom(roomId) {
+    return await Room.findOne({
+      _id: roomId,
+    })
+      .populate('speakers')
+      .populate('ownerId')
+      .exec();
+  }
 }
 
 module.exports = new RoomService();

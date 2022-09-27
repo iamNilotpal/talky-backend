@@ -10,6 +10,7 @@ router.get('/refresh-tokens', authController.refreshToken);
 router.post('/activate', authMiddleware, activateController.activateUser);
 router.post('/logout', authMiddleware, authController.logout);
 router.get('/rooms', authMiddleware, roomController.getAllRooms);
+router.get('/room/:id', authMiddleware, roomController.getRoom);
 router.post('/rooms', authMiddleware, roomController.createRoom);
 
 module.exports = router;
