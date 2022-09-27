@@ -8,13 +8,16 @@ const userService = require('../services/user-service');
 class AuthController {
   async sendOTP(req, res, next) {
     try {
-      const { phone } = req.body;
-      if (!phone) return next(httpErrors.BadRequest('Provide a phone number.'));
+      const { phone, email } = req.body;
+      if (!phone && !email)
+        return next(httpErrors.BadRequest('All fields are required.'));
 
       const otp = otpService.generateOtp();
       const ttl = 1000 * 60 * 3; /* 3 Minutes */
       const expires = Date.now() + ttl;
-      const data = `${phone}.${otp}.${expires}`; /* Will match with the hash provided by the user */
+      const data = `${
+        phone || email
+      }.${otp}.${expires}`; /* Will match with the hash provided by the user */
       const hashedOtp = hashService.hashOtp(data);
 
       // await otpService.sendBySMS(phone, otp);
@@ -22,6 +25,7 @@ class AuthController {
         ok: true,
         hash: `${hashedOtp}.${expires}`,
         phone,
+        email,
         otp,
       });
     } catch (error) {
@@ -32,8 +36,8 @@ class AuthController {
 
   async verifyOTP(req, res, next) {
     try {
-      const { phone, otp, hash } = req.body;
-      if (!phone || !otp || !hash)
+      const { phone, otp, hash, email } = req.body;
+      if ((!phone && !email) || !otp || !hash)
         return next(httpErrors.BadRequest('All fields are required.'));
 
       const [hashedOtp, expires] = hash.split('.');
@@ -44,15 +48,21 @@ class AuthController {
 
       /* If otp hasn't expired compute hash with the phone, 
       expires and otp and match against the hash coming from client */
-      const data = `${phone}.${otp}.${expires}`;
+      const data = `${phone || email}.${otp}.${expires}`;
       const isValid = otpService.verifyOtp(hashedOtp, data);
       if (!isValid) return next(httpErrors.BadRequest("OTP doesn't match."));
 
       /* Find user the phone number if exist generate tokens, store the 
         refresh token in database  and send the required data,
        if not create one and do the same */
-      let user = await userService.findUser({ phone });
-      if (!user) user = await userService.createUser({ phone });
+      let user;
+      if (phone) user = await userService.findUser({ phone });
+      else user = await userService.findUser({ email });
+
+      if (!user) {
+        if (phone) user = await userService.createUser({ phone });
+        else user = await userService.createUser({ email });
+      }
 
       const accessToken = await tokenService.generateAccessToken({
         id: user._id,

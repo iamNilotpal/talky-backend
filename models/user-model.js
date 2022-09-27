@@ -2,7 +2,20 @@ const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema(
   {
-    phone: { type: String, unique: true, required: true },
+    phone: {
+      type: String,
+      unique: true,
+      required: function () {
+        return !this.email;
+      },
+    },
+    email: {
+      type: String,
+      unique: true,
+      required: function () {
+        return !this.phone;
+      },
+    },
     activated: { type: Boolean, required: true, default: false },
     name: {
       type: String,
@@ -18,7 +31,7 @@ const UserSchema = new mongoose.Schema(
       get: (avatar) => (avatar ? `${process.env.BASE_URL}${avatar}` : avatar),
     },
   },
-  { timestamps: true, toJSON: { getters: true } }
+  { timestamps: true, toJSON: { getters: true } },
 );
 
 const User = mongoose.model('User', UserSchema);
