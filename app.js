@@ -1,6 +1,6 @@
+const cors = require('cors');
 const express = require('express');
 const httpErrors = require('http-errors');
-const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
 const app = express();
@@ -11,7 +11,7 @@ app.use(
   cors({
     origin: ['http://localhost:3000', 'https://talky-talk.vercel.app'],
     credentials: true,
-  })
+  }),
 );
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false, limit: '10mb' }));
