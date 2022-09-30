@@ -12,7 +12,6 @@ class UserController {
         user: new UserDto(user),
       });
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }
@@ -25,7 +24,6 @@ class UserController {
         user: new UserDto(user),
       });
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }

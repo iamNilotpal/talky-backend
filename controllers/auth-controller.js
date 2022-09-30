@@ -30,7 +30,6 @@ class AuthController {
         otp,
       });
     } catch (error) {
-      console.log(error);
       return next(httpErrors.InternalServerError('Failed to send OTP.'));
     }
   }
@@ -90,7 +89,6 @@ class AuthController {
         user: new UserDto(user),
       });
     } catch (error) {
-      console.log(error);
       return next(httpErrors.InternalServerError('Failed to validate.'));
     }
   }

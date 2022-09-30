@@ -65,6 +65,12 @@ class UserService {
         throw httpErrors.BadRequest('Only PNG and JPEG files are allowed.');
       }
 
+      // DELETING PREVIOUS AVATAR
+      const id = user.avatar.split('/')[4];
+      const imagePath = path.resolve(__dirname, `../storage/${id}`);
+      await deleteFileFromDisk(path.join(imagePath));
+
+      // UPDATING WITH NEW AVATAR
       const imageName = `Avatar-${nanoid()}.${image.getExtension()}`;
       await image
         .resize(150, Jimp.AUTO)
@@ -73,7 +79,6 @@ class UserService {
 
       return user.save();
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
