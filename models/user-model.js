@@ -30,6 +30,14 @@ const UserSchema = new mongoose.Schema(
       },
       get: (avatar) => (avatar ? `${process.env.BASE_URL}${avatar}` : avatar),
     },
+    rooms: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Room',
+        required: false,
+        default: [],
+      },
+    ],
   },
   { timestamps: true, toJSON: { getters: true } },
 );
