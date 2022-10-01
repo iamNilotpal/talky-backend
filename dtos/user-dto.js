@@ -11,6 +11,7 @@ class UserDto {
     this.id = user._id;
     this.phone = user.phone;
     this.email = user.email;
+    this.rooms = user.rooms;
     this.createdAt = user.createdAt;
     this.activated = user.activated;
     this.name = user.name || '';

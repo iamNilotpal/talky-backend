@@ -21,14 +21,14 @@ class ActivateController {
 
       const buffer = Buffer.from(
         avatar.replace(/^data:image\/(png|jpg|jpeg);base64,/, ''),
-        'base64',
+        'base64'
       );
       let image;
       try {
         image = await Jimp.read(buffer);
       } catch (error) {
         return next(
-          httpErrors.BadRequest('Only PNG and JPEG files are allowed.'),
+          httpErrors.BadRequest('Only PNG and JPEG files are allowed.')
         );
       }
       const imageName = `Avatar-${nanoid()}.${image.getExtension()}`;
@@ -44,7 +44,7 @@ class ActivateController {
       return res.status(200).json({
         ok: true,
         authed: true,
-        user: new UserDto(req.user),
+        user: new UserDto(req.user.populate('rooms')),
       });
     } catch (error) {
       return next(httpErrors.InternalServerError());

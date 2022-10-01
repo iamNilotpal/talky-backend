@@ -14,7 +14,7 @@ class RoomController {
       const room = await roomService.create({
         topic,
         roomType,
-        owner: req.user._id,
+        user: req.user,
       });
       return res.status(200).json({ ok: true, room: new RoomDto(room) });
     } catch (error) {

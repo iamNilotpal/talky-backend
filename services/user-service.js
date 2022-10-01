@@ -35,7 +35,7 @@ class UserService {
 
     await this.validateUserInfo(data);
     if (email !== user.email) {
-      const existUserWithEmail = await User.findOne({ email });
+      const existUserWithEmail = await this.findUser({ email });
       if (!existUserWithEmail)
         throw httpErrors.Conflict('Email is already registered.');
     }

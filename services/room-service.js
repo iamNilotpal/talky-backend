@@ -2,14 +2,16 @@ const Room = require('../models/room-model');
 
 class RoomService {
   async create(data) {
-    const { topic, roomType, owner } = data;
+    const { topic, roomType, user } = data;
     const room = await Room.create({
       topic,
       roomType,
-      owner: owner,
-      speakers: [owner],
+      owner: user._id,
+      speakers: [user._id],
       totalPeople: 1,
     });
+    user.rooms.push(room._id);
+    await user.save();
     return room.populate('owner');
   }
 
