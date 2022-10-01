@@ -48,5 +48,4 @@ following command.
 
 ## Running the project
 
-    $ yarn dev or npm run dev(for development)
-    $ yarn start or npm start (for production)
+    $ yarn dev or npm run dev
