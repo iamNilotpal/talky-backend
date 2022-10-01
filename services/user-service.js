@@ -3,7 +3,7 @@ const util = require('util');
 const path = require('path');
 const Jimp = require('jimp');
 const Joi = require('joi');
-const phone = require('phone');
+const { phone } = require('phone');
 const { nanoid } = require('nanoid');
 const httpErrors = require('http-errors');
 
@@ -99,7 +99,7 @@ class UserService {
     const id = user.avatar.split('/')[4];
     const imagePath = path.resolve(__dirname, `../storage/${id}`);
 
-    await Room.deleteMany({ ownerId: user._id }).exec();
+    await Room.deleteMany({ owner: user._id }).exec();
     await deleteFileFromDisk(path.join(imagePath));
     await user.remove();
   }

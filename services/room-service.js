@@ -2,21 +2,22 @@ const Room = require('../models/room-model');
 
 class RoomService {
   async create(data) {
-    const { topic, roomType, ownerId } = data;
+    const { topic, roomType, owner } = data;
     const room = await Room.create({
       topic,
       roomType,
-      ownerId,
-      speakers: [ownerId],
+      owner: owner,
+      speakers: [owner],
       totalPeople: 1,
     });
-    return room;
+    return room.populate('owner');
   }
 
   async getAllRooms() {
     const rooms = await Room.find({})
+      .sort('-createdAt')
       .populate('speakers')
-      .populate('ownerId')
+      .populate('owner')
       .exec();
     return rooms;
   }
@@ -26,7 +27,7 @@ class RoomService {
       _id: roomId,
     })
       .populate('speakers')
-      .populate('ownerId')
+      .populate('owner')
       .exec();
   }
 }

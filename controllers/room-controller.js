@@ -14,12 +14,13 @@ class RoomController {
       const room = await roomService.create({
         topic,
         roomType,
-        ownerId: req.user._id,
+        owner: req.user._id,
       });
       return res.status(200).json({ ok: true, room: new RoomDto(room) });
     } catch (error) {
+      console.log(error);
       return next(
-        httpErrors.InternalServerError('Error creating room. Try again.'),
+        httpErrors.InternalServerError('Error creating room. Try again.')
       );
     }
   }

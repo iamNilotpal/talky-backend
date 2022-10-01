@@ -3,14 +3,14 @@ class RoomDto {
   roomType;
   topic;
   speakers;
-  ownerId;
+  owner;
   totalPeople;
   createdAt;
 
   constructor(room) {
     this.id = room._id;
     this.roomType = room.roomType;
-    this.ownerId = room.ownerId;
+    this.owner = room.owner;
     this.topic = room.topic;
     this.speakers = room.speakers;
     this.totalPeople = room.totalPeople;

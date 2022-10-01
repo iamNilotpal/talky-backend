@@ -8,7 +8,7 @@ const RoomSchema = new mongoose.Schema(
       required: true,
       default: 'open',
     },
-    ownerId: {
+    owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
