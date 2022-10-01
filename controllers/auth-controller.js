@@ -13,6 +13,10 @@ class AuthController {
       if (!phone && !email)
         return next(httpErrors.BadRequest('All fields are required.'));
 
+      if (phone && !userService.isValidPhone(phone))
+        return next(httpErrors.BadRequest('Enter a valid phone number.'));
+
+      userService.validateUserInfo(req.body);
       const otp = otpService.generateOtp();
       const ttl = 1000 * 60 * 3; /* 3 Minutes */
       const expires = Date.now() + ttl;
@@ -30,6 +34,10 @@ class AuthController {
         otp,
       });
     } catch (error) {
+      if (error.isJoi) {
+        error.status = 400;
+        return next(error);
+      }
       return next(httpErrors.InternalServerError('Failed to send OTP.'));
     }
   }
@@ -43,16 +51,16 @@ class AuthController {
       const [hashedOtp, expires] = hash.split('.');
       if (Date.now() > Number(expires))
         return next(
-          httpErrors.BadRequest('OTP has expired. Request for new one.'),
+          httpErrors.BadRequest('OTP has expired. Request for new one.')
         );
 
-      /* If otp hasn't expired compute hash with the phone, 
+      /* If otp hasn't expired compute hash with the phone,
       expires and otp and match against the hash coming from client */
       const data = `${phone || email}.${otp}.${expires}`;
       const isValid = otpService.verifyOtp(hashedOtp, data);
       if (!isValid) return next(httpErrors.BadRequest("OTP doesn't match."));
 
-      /* Find user the phone number if exist generate tokens, store the 
+      /* Find user the phone number if exist generate tokens, store the
         refresh token in database  and send the required data,
        if not create one and do the same */
       let user;
@@ -100,13 +108,13 @@ class AuthController {
         return next(httpErrors.BadRequest('Token is required.'));
 
       const userData = await tokenService.verifyRefreshToken(
-        refreshTokenFromCookie,
+        refreshTokenFromCookie
       );
       if (!userData) return next(httpErrors.Unauthorized('Token expired.'));
 
       const validToken = await tokenService.findRefreshToken(
         refreshTokenFromCookie,
-        userData.id,
+        userData.id
       );
       if (!validToken) return next(httpErrors.Unauthorized('Token expired.'));
 

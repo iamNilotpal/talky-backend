@@ -39,7 +39,7 @@ const UserSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true, toJSON: { getters: true } },
+  { timestamps: true, toJSON: { getters: true } }
 );
 
 const User = mongoose.model('User', UserSchema);

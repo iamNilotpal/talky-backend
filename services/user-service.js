@@ -2,12 +2,20 @@ const fs = require('fs');
 const util = require('util');
 const path = require('path');
 const Jimp = require('jimp');
+const Joi = require('joi');
+const phone = require('phone');
 const { nanoid } = require('nanoid');
 const httpErrors = require('http-errors');
 
 const Room = require('../models/room-model');
 const User = require('../models/user-model');
 const deleteFileFromDisk = util.promisify(fs.unlink);
+
+const infoValidationSchema = Joi.object({
+  name: Joi.string().trim().optional().label('Name'),
+  phone: Joi.string().trim().optional().label('Phone number'),
+  email: Joi.string().email().trim().optional().label('Email'),
+});
 
 class UserService {
   async findUser(filter) {
@@ -25,6 +33,7 @@ class UserService {
     if (!email && !phone && !name)
       throw httpErrors.BadRequest('At least one field is required.');
 
+    await this.validateUserInfo(data);
     if (email !== user.email) {
       const existUserWithEmail = await User.findOne({ email });
       if (!existUserWithEmail)
@@ -32,6 +41,9 @@ class UserService {
     }
 
     if (phone !== user.phone) {
+      if (!this.isValidPhone(phone))
+        throw httpErrors.BadRequest('Enter a valid phone number.');
+
       const existUserWithPhone = await User.findOne({ phone });
       if (!existUserWithPhone)
         throw httpErrors.Conflict('Phone number already registered.');
@@ -55,7 +67,7 @@ class UserService {
 
       const buffer = Buffer.from(
         avatar.replace(/^data:image\/(png|jpg|jpeg);base64,/, ''),
-        'base64',
+        'base64'
       );
 
       let image;
@@ -90,6 +102,16 @@ class UserService {
     await Room.deleteMany({ ownerId: user._id }).exec();
     await deleteFileFromDisk(path.join(imagePath));
     await user.remove();
+  }
+
+  isValidPhone(phoneNumber) {
+    return phone(phoneNumber, {
+      country: 'IND',
+    }).isValid;
+  }
+
+  validateUserInfo(info) {
+    return infoValidationSchema.validateAsync(info);
   }
 }
 
