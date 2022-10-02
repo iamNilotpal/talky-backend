@@ -36,7 +36,7 @@ class UserService {
     await this.validateUserInfo(data);
     if (email !== user.email) {
       const existUserWithEmail = await this.findUser({ email });
-      if (!existUserWithEmail)
+      if (existUserWithEmail)
         throw httpErrors.Conflict('Email is already registered.');
     }
 
@@ -45,7 +45,7 @@ class UserService {
         throw httpErrors.BadRequest('Enter a valid phone number.');
 
       const existUserWithPhone = await User.findOne({ phone });
-      if (!existUserWithPhone)
+      if (existUserWithPhone)
         throw httpErrors.Conflict('Phone number already registered.');
     }
 

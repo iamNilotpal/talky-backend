@@ -19,11 +19,12 @@ class ActivateController {
       if (!name || !avatar)
         return next(httpErrors.BadRequest('All fields are required'));
 
+      let image;
       const buffer = Buffer.from(
         avatar.replace(/^data:image\/(png|jpg|jpeg);base64,/, ''),
         'base64'
       );
-      let image;
+
       try {
         image = await Jimp.read(buffer);
       } catch (error) {
@@ -44,7 +45,7 @@ class ActivateController {
       return res.status(200).json({
         ok: true,
         authed: true,
-        user: new UserDto(req.user.populate('rooms')),
+        user: new UserDto(req.user),
       });
     } catch (error) {
       return next(httpErrors.InternalServerError());

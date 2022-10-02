@@ -68,8 +68,8 @@ class AuthController {
       else user = await userService.findUser({ email });
 
       if (!user) {
-        if (phone) user = await userService.createUser({ phone });
-        else user = await userService.createUser({ email });
+        if (email) user = await userService.createUser({ email });
+        else user = await userService.createUser({ phone });
       }
 
       const accessToken = await tokenService.generateAccessToken({
@@ -97,6 +97,7 @@ class AuthController {
         user: new UserDto(user),
       });
     } catch (error) {
+      console.log(error);
       return next(httpErrors.InternalServerError('Failed to validate.'));
     }
   }

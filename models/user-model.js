@@ -2,20 +2,8 @@ const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema(
   {
-    phone: {
-      type: String,
-      unique: true,
-      required: function () {
-        return !this.email;
-      },
-    },
-    email: {
-      type: String,
-      unique: true,
-      required: function () {
-        return !this.phone;
-      },
-    },
+    phone: { type: String, unique: true, required: false },
+    email: { type: String, unique: true, required: false },
     activated: { type: Boolean, required: true, default: false },
     name: {
       type: String,
