@@ -10,7 +10,7 @@ async function startServer() {
   try {
     await startMongoDB(server);
     server.listen(PORT, () =>
-      console.log(`🚀🚀🚀 Server Running On http://localhost:${PORT}`),
+      console.log(`🚀🚀🚀 Server Running On http://localhost:${PORT}`)
     );
   } catch (error) {
     console.log(error);
@@ -18,4 +18,6 @@ async function startServer() {
 }
 
 startServer();
+
 module.exports = server;
+require('./socket-io');
