@@ -1,3 +1,5 @@
+const httpErrors = require('http-errors');
+const { isValidObjectId } = require('mongoose');
 const Room = require('../models/room-model');
 
 class RoomService {
@@ -25,6 +27,9 @@ class RoomService {
   }
 
   async getRoom(roomId) {
+    if (!isValidObjectId(roomId))
+      throw httpErrors.UnprocessableEntity('Invalid room id');
+
     return await Room.findOne({
       _id: roomId,
     })

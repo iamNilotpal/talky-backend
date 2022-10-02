@@ -43,6 +43,7 @@ class RoomController {
       if (!room) return next(httpErrors.NotFound("Room doesn't exist."));
       return res.status(200).json({ ok: true, room: new RoomDto(room) });
     } catch (error) {
+      if (httpErrors.isHttpError(error)) return next(error);
       return next(httpErrors.InternalServerError('Error fetching rooms.'));
     }
   }

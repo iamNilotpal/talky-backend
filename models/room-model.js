@@ -17,6 +17,7 @@ const RoomSchema = new mongoose.Schema(
     speakers: {
       type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
       required: false,
+      default: [],
     },
     totalPeople: { type: Number, required: false, default: 0 },
   },
