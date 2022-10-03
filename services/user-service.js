@@ -19,8 +19,8 @@ const infoValidationSchema = Joi.object({
 
 class UserService {
   async findUser(filter) {
-    const user = await User.findOne(filter).populate('rooms').exec();
-    return user;
+    const user = await User.findOne(filter).exec();
+    return user.populate('rooms');
   }
 
   async createUser(data) {
@@ -46,7 +46,7 @@ class UserService {
 
       const existUserWithPhone = await User.findOne({ phone });
       if (existUserWithPhone)
-        throw httpErrors.Conflict('Phone number already registered.');
+        throw httpErrors.Conflict('Phone number is already registered.');
     }
 
     const dataToUpdate = {
