@@ -16,7 +16,7 @@ class AuthController {
       if (phone && !userService.isValidPhone(phone))
         return next(httpErrors.BadRequest('Enter a valid phone number.'));
 
-      userService.validateUserInfo(req.body);
+      await userService.validateUserInfo(req.body);
       const otp = otpService.generateOtp();
       const ttl = 1000 * 60 * 3; /* 3 Minutes */
       const expires = Date.now() + ttl;
