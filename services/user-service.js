@@ -20,7 +20,7 @@ const infoValidationSchema = Joi.object({
 class UserService {
   async findUser(filter) {
     const user = await User.findOne(filter).exec();
-    return user.populate('rooms');
+    return user?.populate('rooms');
   }
 
   async createUser(data) {
@@ -110,8 +110,8 @@ class UserService {
     }).isValid;
   }
 
-  validateUserInfo(info) {
-    return infoValidationSchema.validateAsync(info);
+  async validateUserInfo(info) {
+    return await infoValidationSchema.validateAsync(info);
   }
 }
 

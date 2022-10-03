@@ -16,12 +16,13 @@ class AuthController {
       if (phone && !userService.isValidPhone(phone))
         return next(httpErrors.BadRequest('Enter a valid phone number.'));
 
-      await userService.validateUserInfo(req.body);
+      const info = await userService.validateUserInfo(req.body);
       const otp = otpService.generateOtp();
       const ttl = 1000 * 60 * 3; /* 3 Minutes */
       const expires = Date.now() + ttl;
+
       const data = `${
-        phone || email
+        info.phone || info.email
       }.${otp}.${expires}`; /* Will match with the hash provided by the user */
       const hashedOtp = hashService.hashOtp(data);
 
