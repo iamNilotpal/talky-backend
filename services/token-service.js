@@ -33,7 +33,7 @@ class TokenService {
     res.cookie(key, data.token, {
       maxAge: data.age,
       httpOnly: true,
-      sameSite: 'Lax',
+      sameSite: 'none',
       path: '/',
       secure: true,
     });
