@@ -55,22 +55,26 @@ io.on('connection', (socket) => {
   );
 
   const leaveRoom = ({ roomId }) => {
-    const clients = getConnectedClients(roomId);
+    const rooms = Array.from(socket.rooms);
 
-    clients.forEach((connectedClient) => {
-      io.to(connectedClient.socketId).emit(SOCKET_EVENTS.REMOVE_PEER, {
-        peerId: socket.id,
-        userId: USER_MAPPING[socket.id]?.id,
-      });
+    rooms.forEach((id) => {
+      // GETTING ALL THE CLIENTS THAT ARE CONNECTED TO THE ROOM by its "roomId"
+      const connectedClients = getConnectedClients(id);
+      connectedClients.forEach((connectedClient) => {
+        io.to(connectedClient.socketId).emit(SOCKET_EVENTS.REMOVE_PEER, {
+          peerId: socket.id,
+          userId: USER_MAPPING[socket.id]?.id,
+        });
 
-      socket.emit(SOCKET_EVENTS.REMOVE_PEER, {
-        peerId: connectedClient.socketId,
-        userId: USER_MAPPING[connectedClient.socketId]?.id,
+        socket.emit(SOCKET_EVENTS.REMOVE_PEER, {
+          peerId: connectedClient.socketId,
+          userId: connectedClient.client?.id,
+        });
       });
     });
 
-    socket.leave(roomId);
     delete USER_MAPPING[socket.id];
+    socket.leave(roomId);
   };
 
   // HANDLE REMOVE PEER
