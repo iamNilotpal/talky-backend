@@ -3,10 +3,10 @@ const httpErrors = require('http-errors');
 const tokenService = require('../services/token-service');
 const userService = require('../services/user-service');
 
-function clearCookies(res) {
+const clearCookies = (res) => {
   res.clearCookie('accessToken');
   res.clearCookie('refreshToken');
-}
+};
 
 async function authMiddleware(req, res, next) {
   try {
@@ -81,6 +81,7 @@ async function authMiddleware(req, res, next) {
       req.user = user;
       next();
     } catch (error) {
+      clearCookies(res);
       next(httpErrors.Unauthorized('Session expired. Login again.'));
     }
   }

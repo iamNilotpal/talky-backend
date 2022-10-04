@@ -54,30 +54,26 @@ io.on('connection', (socket) => {
     })
   );
 
-  const leaveRoom = ({ roomId }) => {
-    const rooms = Array.from(socket.rooms);
+  // HANDLE REMOVE PEER
+  socket.on(SOCKET_EVENTS.LEAVE, leaveRoom);
+  socket.on('disconnecting', leaveRoom);
 
-    rooms.forEach((id) => {
-      // GETTING ALL THE CLIENTS THAT ARE CONNECTED TO THE ROOM by its "roomId"
-      const connectedClients = getConnectedClients(id);
-      connectedClients.forEach((connectedClient) => {
-        io.to(connectedClient.socketId).emit(SOCKET_EVENTS.REMOVE_PEER, {
-          peerId: socket.id,
-          userId: USER_MAPPING[socket.id]?.id,
-        });
+  function leaveRoom({ roomId }) {
+    const connectedClients = getConnectedClients(roomId);
 
-        socket.emit(SOCKET_EVENTS.REMOVE_PEER, {
-          peerId: connectedClient.socketId,
-          userId: connectedClient.client?.id,
-        });
+    connectedClients.forEach((connectedClient) => {
+      io.to(connectedClient.socketId).emit(SOCKET_EVENTS.REMOVE_PEER, {
+        peerId: socket.id,
+        userId: USER_MAPPING[socket.id]?.id,
+      });
+
+      socket.emit(SOCKET_EVENTS.REMOVE_PEER, {
+        peerId: connectedClient.socketId,
+        userId: connectedClient.client?.id,
       });
     });
 
     delete USER_MAPPING[socket.id];
     socket.leave(roomId);
-  };
-
-  // HANDLE REMOVE PEER
-  socket.on(SOCKET_EVENTS.LEAVE, leaveRoom);
-  socket.on('disconnecting', leaveRoom);
+  }
 });
