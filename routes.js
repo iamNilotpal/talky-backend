@@ -26,7 +26,7 @@ router.patch('/user/avatar', authMiddleware, userController.updateAvatar);
 router.delete(
   '/user/delete-account',
   authMiddleware,
-  userController.deleteAccount,
+  userController.deleteAccount
 );
 
 module.exports = router;

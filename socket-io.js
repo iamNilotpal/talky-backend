@@ -1,33 +1,37 @@
-const socketIO = require('socket.io');
+const { Server } = require('socket.io');
 const server = require('./server');
 const SOCKET_EVENTS = require('./constants/socket-events');
 
 const USER_MAPPING = {};
-const io = socketIO(server, {
+const io = new Server(server, {
   cors: { origin: process.env.FRONTEND_URL, methods: ['GET', 'POST'] },
 });
+
+const getConnectedClients = (roomId) =>
+  Array.from(io.sockets.adapter.rooms.get(roomId) || []).map((socketId) => ({
+    socketId,
+    client: USER_MAPPING[socketId],
+  }));
 
 io.on('connection', (socket) => {
   socket.on(SOCKET_EVENTS.JOIN, ({ roomId, user }) => {
     USER_MAPPING[socket.id] = user;
     // GETTING ALL THE CLIENTS THAT ARE CONNECTED TO THE ROOM by its "roomId"
-    const clients = Array.from(io.sockets.adapter.rooms.get(roomId) || []);
-
+    const clients = getConnectedClients(roomId);
     // NOW LOOP OVER THE CLIENTS ADD EMIT AN EVENT THAT A NEW CLIENT WANTS TO JOIN
     // ALSO EMIT AN EVENT THE CURRENT CLIENT WHO WANTS TO JOIN PASSING SOME INFO
-    clients.forEach((clientId) => {
+    clients.forEach((connectedClient) => {
       // FOR OTHER CLIENTS
-      io.to(clientId).emit(SOCKET_EVENTS.ADD_PEER, {
+      io.to(connectedClient.socketId).emit(SOCKET_EVENTS.ADD_PEER, {
         peerId: socket.id,
         createOffer: false,
         remoteUser: user,
       });
-
       // FOR THE CURRENT CLIENT
       socket.emit(SOCKET_EVENTS.ADD_PEER, {
-        peerId: clientId,
+        peerId: connectedClient.socketId,
         createOffer: true,
-        remoteUser: USER_MAPPING[clientId],
+        remoteUser: USER_MAPPING[connectedClient.socketId],
       });
     });
 
@@ -51,23 +55,21 @@ io.on('connection', (socket) => {
   );
 
   const leaveRoom = ({ roomId }) => {
-    const rooms = Array.from(socket.rooms);
-    rooms.forEach((id) => {
-      // GETTING ALL THE CLIENTS THAT ARE CONNECTED TO THE ROOM by its "roomId"
-      const clients = Array.from(io.sockets.adapter.rooms.get(id) || []);
-      clients.forEach((clientId) => {
-        io.to(clientId).emit(SOCKET_EVENTS.REMOVE_PEER, {
-          peerId: socket.id,
-          userId: USER_MAPPING[socket.id]?.id,
-        });
+    const clients = getConnectedClients(roomId);
 
-        socket.emit(SOCKET_EVENTS.REMOVE_PEER, {
-          peerId: clientId,
-          userId: USER_MAPPING[clientId]?.id,
-        });
+    clients.forEach((connectedClient) => {
+      io.to(connectedClient.socketId).emit(SOCKET_EVENTS.REMOVE_PEER, {
+        peerId: socket.id,
+        userId: USER_MAPPING[socket.id]?.id,
       });
-      socket.leave(roomId);
+
+      socket.emit(SOCKET_EVENTS.REMOVE_PEER, {
+        peerId: connectedClient.socketId,
+        userId: USER_MAPPING[connectedClient.socketId]?.id,
+      });
     });
+
+    socket.leave(roomId);
     delete USER_MAPPING[socket.id];
   };
 
