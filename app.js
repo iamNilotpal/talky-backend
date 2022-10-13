@@ -26,10 +26,10 @@ app.use('/storage', express.static('storage/'));
 app.use('/api', require('./routes'));
 
 // 404 Error Handler
-app.use((req, res, next) => next(httpErrors.NotFound()));
+app.use((_req, _res, next) => next(httpErrors.NotFound()));
 
 //  Global Error Handler
-app.use((error, req, res, next) => {
+app.use((error, _req, res, _next) => {
   if (error.status === 404)
     return res.status(404).json({
       ok: false,

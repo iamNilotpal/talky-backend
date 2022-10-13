@@ -1,10 +1,9 @@
 const httpErrors = require('http-errors');
-
 const UserDto = require('../dtos/user-dto');
-const hashService = require('../services/hash-service');
 const otpService = require('../services/otp-service');
-const tokenService = require('../services/token-service');
 const userService = require('../services/user-service');
+const hashService = require('../services/hash-service');
+const tokenService = require('../services/token-service');
 
 class AuthController {
   async sendOTP(req, res, next) {

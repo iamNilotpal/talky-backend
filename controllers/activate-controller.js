@@ -2,7 +2,6 @@ const path = require('path');
 const Jimp = require('jimp');
 const { nanoid } = require('nanoid');
 const httpErrors = require('http-errors');
-
 const UserDto = require('../dtos/user-dto');
 
 class ActivateController {

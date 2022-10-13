@@ -9,12 +9,10 @@ async function startMongoDB(server) {
       })
       .then(() => console.log('🔥🔥🔥 MongoDB Connection Ready.'));
 
+    mongoose.connection.on('error', (e) => console.log(`😢😢😢 ${e.message}`));
     mongoose.connection.on('connected', () =>
       console.log('🔥🔥🔥 Mongoose Connection Ready.')
     );
-
-    mongoose.connection.on('error', (e) => console.log(`😢😢😢 ${e.message}`));
-
     mongoose.connection.on('disconnecting', () =>
       console.log('😢😢😢 Mongoose Connection Disconnected.')
     );

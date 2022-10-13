@@ -1,5 +1,4 @@
 const httpErrors = require('http-errors');
-
 const UserDto = require('../dtos/user-dto');
 const userService = require('../services/user-service');
 

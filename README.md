@@ -5,7 +5,7 @@
 ## Requirements
 
 For development, you will only need Node.js and a node global package, Yarn or
-NPM, installed in your environement.
+NPM, installed in your environment.
 
 ### Node
 

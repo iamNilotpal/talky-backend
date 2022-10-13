@@ -60,7 +60,6 @@ io.on('connection', (socket) => {
 
   function leaveRoom({ roomId }) {
     const connectedClients = getConnectedClients(roomId);
-
     connectedClients.forEach((connectedClient) => {
       io.to(connectedClient.socketId).emit(SOCKET_EVENTS.REMOVE_PEER, {
         peerId: socket.id,
