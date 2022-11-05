@@ -11,7 +11,7 @@ app.set('trust proxy', 1);
 app.disable('x-powered-by');
 app.use(
   cors({
-    origin: ['http://localhost:3000', 'https://talky-talk.vercel.app'],
+    origin: ['http://localhost:3000', 'https://talk-club.vercel.app'],
     credentials: true,
   })
 );
